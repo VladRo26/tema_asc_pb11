@@ -1,0 +1,82 @@
+Turis Gavriil-Vlad, CTI anul ,grupa 162
+a:
+section .data
+
+msg_da db "Este divizibil", 0x0a
+msg_da_len equ $ -msg_da
+
+msg_nu db "Nu este divizibil", 0x0a
+msg_nu_len equ $ -msg_nu
+
+len equ 30
+
+section .bss
+string resb len
+index resb 1
+
+section .text
+global _start
+
+_start:
+ mov eax,3
+ mov ebx,0
+ mov ecx,string
+ mov edx,len
+ int 0x80
+ 
+ sub eax ,2
+ mov [index],al
+ 
+ mov eax,string
+ add al,[index]
+ 
+ cmp byte [eax], '0'
+ je da
+ cmp byte [eax], '5'
+ je da
+ 
+ mov eax,4
+ mov ebx,1
+ mov ecx,msg_nu
+ mov edx,msg_nu_len
+ int 0x80
+ 
+ jmp exit
+da:
+ mov eax,4
+ mov ebx,1
+ mov ecx,msg_da
+ mov edx,msg_da_len
+ int 0x80
+ exit:
+mov eax,1
+mov ebx,0
+int 0x80
+b:
+#include <unistd.h>
+
+#define len 30
+
+char msg_da[] = "Este\n";
+#define msg_da_len 5
+
+char msg_nu[] ="Nu e\n";
+#define msg_nu_len 5
+
+char string[len];
+char i;
+
+int main()
+{
+    i = read(0, string, len);
+
+    i -= 2;
+
+    if(string[i] == '0' || string[i] == '5')
+        write(1, msg_da, msg_da_len);
+    else
+        write(1, msg_nu, msg_nu_len);
+
+    return 0;
+}
+ 
